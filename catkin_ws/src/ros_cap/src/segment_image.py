@@ -12,8 +12,8 @@ lower_blue = np.array([110,50,50])
 upper_blue = np.array([130,255,255])
 lower_red = np.array([150,100,50])
 upper_red = np.array([180,255,255])
-lower_yellow = np.array([21,60,50])
-upper_yellow = np.array([35,255,255])
+lower_yellow = np.array([20,130,130])
+upper_yellow = np.array([40,255,255])
 
 
 class SegmentImage():
@@ -51,7 +51,7 @@ class SegmentImage():
         image_out = cv2.cvtColor(frame, color_space)
 
         # Filtrar colores de la imagen en el rango utilizando 
-        mask = cv2.inRange(image_out, lower_red, upper_red)
+        mask = cv2.inRange(image_out, lower_yellow, upper_yellow)
 
         # Bitwise-AND mask and original image
         segment_image = cv2.bitwise_and(frame,frame, mask= mask)
