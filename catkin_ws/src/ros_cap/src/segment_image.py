@@ -10,10 +10,10 @@ from cv_bridge import CvBridge, CvBridgeError
 
 lower_blue = np.array([110,50,50])
 upper_blue = np.array([130,255,255])
-lower_red = np.array([0,0,0])
-upper_red = np.array([0,0,0])
-lower_yellow = np.array([0,0,0])
-upper_yellow = np.array([0,0,0])
+lower_red = np.array([150,100,50])
+upper_red = np.array([180,255,255])
+lower_yellow = np.array([21,60,50])
+upper_yellow = np.array([35,255,255])
 
 
 class SegmentImage():
@@ -22,7 +22,7 @@ class SegmentImage():
 
 
         #Subscribirce al topico "/duckiebot/camera_node/image/raw"
-        self.image_subscriber = None 
+        self.image_subscriber = rospy.Subscriber("/duckiebot/camera_node/image/raw",Image,self._process_image)
 
         #Clase necesaria para transformar el tipo de imagen
         self.bridge = CvBridge()
@@ -30,7 +30,10 @@ class SegmentImage():
         #Ultima imagen adquirida
         self.cv_image = Image()
         
+        #publisher
+        self.pub = rospy.Publisher("/duckiebot/patofiltrado",Image,queue_size=1)
 
+        print("explotando en 3, 2, 1...")        
 
     def _process_image(self,img):
 
@@ -44,15 +47,16 @@ class SegmentImage():
         frame = self.cv_image
 
         #Cambiar tipo de color de BGR a HSV
+        color_space = cv2.COLOR_BGR2HSV
+        image_out = cv2.cvtColor(frame, color_space)
 
         # Filtrar colores de la imagen en el rango utilizando 
-        #mask = cv2.inRange(image, lower_limit, upper_limit)
+        mask = cv2.inRange(image_out, lower_red, upper_red)
 
         # Bitwise-AND mask and original image
         segment_image = cv2.bitwise_and(frame,frame, mask= mask)
-
-        #Publicar imagenes
-
+        imga= self.bridge.cv2_to_imgmsg(segment_image, "bgr8")
+        self.pub.publish(imga)
 
 
 def main():

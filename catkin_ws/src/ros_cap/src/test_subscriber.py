@@ -14,6 +14,7 @@ def process_callback(msg):
     rospy.loginfo(msg)
     rospy.loginfo(msg.axes[0])
 
+
 if __name__ == '__main__':
     main()
 
