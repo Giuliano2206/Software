@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Activating ROS "$ROS_DISTRO"..."
-source /opt/ros/$ROS_DISTRO/setup.bash
+echo "Activating ROS Kinetic..."
+source /opt/ros/kinetic/setup.bash
 echo "...done."
 echo
 
