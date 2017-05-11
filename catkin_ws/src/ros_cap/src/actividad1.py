@@ -13,7 +13,7 @@ def main():
 
 	
 def process_callback(msg):
-    base_pub = rospy.Publisher('/duckiebot/wheels_driver_node/car_cmd', Twist2DStamped, queue_size=1)
+    base_pub = rospy.Publisher('/duckiebot/wheels_driver_node/posible_cmd', Twist2DStamped, queue_size=1)
     msga=Twist2DStamped()
     msga.header.stamp = rospy.get_rostime()     
     rospy.loginfo(msg)

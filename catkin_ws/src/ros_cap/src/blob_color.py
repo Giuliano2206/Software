@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-
+import math
 import rospy
 # import rospkg
 import cv2
@@ -95,16 +95,21 @@ class BlobColor():
                 x2=x+w
                 y2=y+h
                 frame=cv2.rectangle(frame, (x1,y1), (x2,y2), (80,20,77), 2)
-            
+                #Publicar Point center de mayor tamanio
+                puntillo=Point()
+                puntillo.x=((x1+x2)/2)
+                puntillo.y=((y1+y2)/2)
+                #Foco respecto a X fx truncado
+                puntillo.z=(310.089*3.5/w)
+                #foco respecto a Y fy truncado
+                #puntillo.z=(309.71*3.5/sqrt(y1^2+y2^2))
+                self.publito.publish(puntillo)
+        
         #Publicar frame
         #imagesita=cv2.cvtColor(rectangle,cv2.COLOR_GRAY2BGR)
         imgb= self.bridge.cv2_to_imgmsg(frame, "bgr8")
         self.pub.publish(imgb)
-        #Publicar Point center de mayor tamanio
-        puntillo=Point()
-        puntillo.x=((x1+x2)/2)
-        puntillo.y=((y1+y2)/2)
-        self.publito.publish(puntillo)        
+       
 def main():
 
     rospy.init_node('BlobColor')
