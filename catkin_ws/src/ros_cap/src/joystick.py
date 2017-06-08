@@ -5,15 +5,15 @@ from sensor_msgs.msg import Joy
 from duckietown_msgs.msg import  Twist2DStamped, BoolStamped
 
 def main():
-    rospy.init_node('test_subscriber')
-    rospy.loginfo('test_subscriber')
+    rospy.init_node('joystick')
+    rospy.loginfo('joystick')
     # Subscriber for joint states
     sub = rospy.Subscriber('/duckiebot/joy', Joy, process_callback)
     rospy.spin()
 
 	
 def process_callback(msg):
-    base_pub = rospy.Publisher('/duckiebot/wheels_driver_node/posible_cmd', Twist2DStamped, queue_size=1)
+    base_pub = rospy.Publisher('/duckiebot/wheels_driver_node/possible_cmd', Twist2DStamped, queue_size=1)
     msga=Twist2DStamped()
     msga.header.stamp = rospy.get_rostime()     
     rospy.loginfo(msg)
