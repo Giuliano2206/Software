@@ -13,7 +13,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 import numpy as np
 
-# define range of blue color in HSV
+# define range of color in HSV
 lower_blue = np.array([110,50,50])
 upper_blue = np.array([130,255,255])
 lower_red = np.array([0,0,0])
@@ -45,7 +45,7 @@ class BlobColor():
 
     def _process_image(self,img):
 
-        #Se cambiar mensage tipo ros a imagen opencv
+        #Se cambia mensage tipo ros a imagen opencv
         try:
             self.cv_image = self.bridge.imgmsg_to_cv2(img, "bgr8")
         except CvBridgeError as e:
