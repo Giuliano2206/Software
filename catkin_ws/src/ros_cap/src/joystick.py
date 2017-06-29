@@ -18,7 +18,7 @@ def process_callback(msg):
     msga.header.stamp = rospy.get_rostime()     
     rospy.loginfo(msg)
     if msg.buttons[1]==0:       
-        msga.omega=9*(msg.axes[0])        
+        msga.omega=9*(msg.axes[3])        
         msga.v=msg.axes[1]
     else:
         msga.v=0
