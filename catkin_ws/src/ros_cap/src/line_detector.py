@@ -28,44 +28,56 @@ class LineDetector():
     def __init__(self):
 
 
-        #Subscribirce al topico "/duckiebot/camera_node/image/raw"
-        self.image_subscriber = rospy.Subscriber("/duckiebot/camera_node/image/rect",Image,self._process_image) 
+        # Subscribirce al topico "/duckiebot/camera_node/image/raw"
+        self.image_subscriber = rospy.Subscriber("/duckiebot/camera_node/image/rect",Image,self._process_image)
 
-        #Clase necesaria para transformar el tipo de imagen
+        # Publicar imagen filtrada al topico "duckiebot/lineafiltrada"
+        self.pub_1 = rospy.Publisher("/duckiebot/lineafiltrada",Image,queue_size=1)
+
+        # Publicar datos de lineas al topico "/duckiebot/datoslineas"
+        self.pub_2 = rospy.Publisher("/duckiebot/datoslineas",Point,queue_size=1)
+
+        # Clase necesaria para transformar el tipo de imagen
         self.bridge = CvBridge()
 
-        #Ultima imagen adquirida
+        # Ultima imagen adquirida
         self.cv_image = Image()
 
-        self.min_area = 30
+        # Minimo largo de una linea
+        self.min_length = 30
 
-        #publisher
-        self.pub = rospy.Publisher("/duckiebot/lineafiltrada",Image,queue_size=1)
-        self.publito = rospy.Publisher("/duckiebot/puntolinea",Point,queue_size=1)
-        print("explotando en 3, 2, 1...") 
+        # Chiste
+        print("encontrando lineas en 3, 2, 1...") 
 
-    def _process_image(self,img):
+    def _process_image(self,image):
 
-        #Se cambia mensage tipo ros a imagen opencv
+        # Se cambia mensage tipo ros a imagen opencv
         try:
-            self.cv_image = self.bridge.imgmsg_to_cv2(img, "bgr8")
+            self.cv_image = self.bridge.imgmsg_to_cv2(image, "bgr8")
         except CvBridgeError as e:
             print(e)
 
-        #Se deja en frame la imagen actual
+        # Se deja en frame la imagen actual
         frame = self.cv_image
 
-        #Cambiar tipo de color de BGR a HSV
+        # Creamos los espacios de color
         color_space = cv2.COLOR_BGR2HSV
-        image_out = cv2.cvtColor(frame, color_space)
+        gray_space = cv2.COLOR_BGR2GRAY
 
-        # Filtrar colores de la imagen en el rango utilizando 
-        mask = cv2.inRange(image_out, lower_white, upper_white)
+        # Encontramos las imagenes en los nuevos espacios
+        image_GRAY = cv2.cvtColor(frame, gray_space)
+        image_HSV = cv2.cvtColor(frame, color_space)
+
+        # Filtramos bordes de la imagen GRAY utilizada
+        sketch = cv2.Canny(image_GRAY, 50, 150, apertureSize=3)
+
+        # Filtrar colores de la imagen HSV utilizada
+        mask = cv2.inRange(image_HSV, lower_white, upper_white)
 
         # Bitwise-AND mask and original image
         #segment_image = cv2.bitwise_and(frame,frame, mask= mask)
         #imga= self.bridge.cv2_to_imgmsg(segment_image, "bgr8")
-        #self.pub.publish(imga)
+        #self.pub_1.publish(imga)
 
         kernel = np.ones((5,5),np.uint8)
 
@@ -104,12 +116,12 @@ class LineDetector():
                 puntillo.z=(310.089*3.5/w)
                 #foco respecto a Y fy truncado
                 #puntillo.z=(309.71*3.5/sqrt(y1^2+y2^2))
-                self.publito.publish(puntillo)
+                self.pub_2.publish(puntillo)
         
         #Publicar frame
         #imagesita=cv2.cvtColor(rectangle,cv2.COLOR_GRAY2BGR)
         imgb= self.bridge.cv2_to_imgmsg(frame, "bgr8")
-        self.pub.publish(imgb)
+        self.pub_1.publish(imgb)
        
 def main():
 
