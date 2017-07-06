@@ -1,5 +1,6 @@
 import math as np
-import Lib\opencv\build\python\2.7\x64\cv2
+import rospy
+import cv2
 
 
 class LineDetector():
@@ -18,7 +19,7 @@ class LineDetector():
         edges_1 = cv2.Canny(gray_1, 50, 150, apertureSize=3)
         edges_2 = cv2.Canny(gray_2, 50, 150, apertureSize=3)
 
-        min_line_length = 100
+        min_line_length = 30
         max_line_gap = 10
 
         lines_1 = cv2.HoughLinesP(edges_1, 1, np.pi / 180, 100, min_line_length, max_line_gap)
